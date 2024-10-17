@@ -21,7 +21,7 @@ def run_program(program_name):
     result = subprocess.run(f"./{program_name}", capture_output=True, text=True, check=True)
     return result.stdout
 
-@pytest.mark.parametrize("compiled_program", ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10"], indirect=True)
+@pytest.mark.parametrize("compiled_program", ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11"], indirect=True)
 def test_program_output(compiled_program):
     output = run_program(compiled_program)
     
@@ -135,6 +135,15 @@ def test_p10_waitpid_behavior():
     assert "Parent: waitpid() returned" in output and "Parent: waitpid() returned -1" not in output
     
     cleanup_program("p10")
+
+def test_p11_stdout_redirection():
+    compile_program("p11")
+    output = run_program("p11")
+    
+    assert "Child: Before closing stdout" in output
+    assert "Child: After closing stdout" not in output
+    assert "Parent: Child process has finished" in output
+    
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--capture=no"])
