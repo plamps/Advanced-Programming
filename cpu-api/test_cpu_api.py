@@ -21,7 +21,7 @@ def run_program(program_name):
     result = subprocess.run(f"./{program_name}", capture_output=True, text=True, check=True)
     return result.stdout
 
-@pytest.mark.parametrize("compiled_program", ["p1", "p2", "p3", "p4", "p5", "p6", "p7"], indirect=True)
+@pytest.mark.parametrize("compiled_program", ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9"], indirect=True)
 def test_program_output(compiled_program):
     output = run_program(compiled_program)
     
@@ -101,6 +101,29 @@ def test_p7_child_first():
     assert lines[1] == "goodbye", "Second line should be 'goodbye'"
     
     cleanup_program("p7")
+
+def test_p8_exec_variants():
+    compile_program("p8")
+    output = run_program("p8")
+    
+    assert "Main program" in output
+    assert "Child 0" in output
+    assert "total" in output  # This is typically in the output of ls -l
+    assert "Makefile" in output  # Check for a specific file that should be listed
+    assert "p8.c" in output  # Check for another specific file
+    
+    cleanup_program("p8")
+
+def test_p9_wait_behavior():
+    compile_program("p9")
+    output = run_program("p9")
+    
+    assert "Parent process" in output
+    assert "Child process" in output
+    assert "Child: wait() returned -1" in output
+    assert "Parent: wait() returned" in output and "Parent: wait() returned -1" not in output
+    
+    cleanup_program("p9")
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--capture=no"])
