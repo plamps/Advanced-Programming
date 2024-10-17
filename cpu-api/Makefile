@@ -1,4 +1,4 @@
-all: bins p1 p2 p3 p4 p5
+all: bins p1 p2 p3 p4 p5 p6
 
 bins:
 	mkdir -p bins
@@ -20,3 +20,6 @@ p4: p4.c
 
 p5: p5.c
 	gcc -o bins/p5 p5.c -Wall
+
+p6: p6.c
+	gcc -o bins/p6 p6.c -Wall

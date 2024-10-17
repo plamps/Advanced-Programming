@@ -21,7 +21,7 @@ def run_program(program_name):
     result = subprocess.run(f"./{program_name}", capture_output=True, text=True, check=True)
     return result.stdout
 
-@pytest.mark.parametrize("compiled_program", ["p1", "p2", "p3", "p4", "p5"], indirect=True)
+@pytest.mark.parametrize("compiled_program", ["p1", "p2", "p3", "p4", "p5", "p6"], indirect=True)
 def test_program_output(compiled_program):
     output = run_program(compiled_program)
     
@@ -58,6 +58,17 @@ def test_program_output(compiled_program):
         assert re.search(r"hello I am parent of \d+ \(wc:\d+\) \(pid:\d+\)", output)
         assert re.search(r"x = 100 \(in parent\)", output)
         assert re.search(r"x = 300 \(in parent after changing\)", output)
+    
+    elif compiled_program == "p6":
+        assert "File opened with descriptor:" in output
+        assert "Child wrote to file" in output
+        assert "Parent wrote to file" in output
+        
+        with open("p6_output.txt", "r") as f:
+            file_content = f.read()
+        
+        assert "Hello from child!" in file_content
+        assert "Hello from parent!" in file_content
 
 def test_p4_file_creation():
     compile_program("p4")

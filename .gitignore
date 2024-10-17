@@ -12,6 +12,7 @@ p6
 
 # Output files
 *.output
+*.txt
 
 # macOS system files
 .DS_Store
